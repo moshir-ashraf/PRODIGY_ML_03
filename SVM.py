@@ -1,9 +1,10 @@
 import pandas as pd
+import cv2
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, precision_score, f1_score, \
     recall_score
-from skimage import io, color, feature
+from skimage import feature
 from skimage.transform import resize
 
 data = pd.read_csv('imageLabels.csv')
@@ -13,9 +14,8 @@ xTrain, xTest, yTrain, yTest = train_test_split(paths, target, test_size=0.3, ra
 
 
 def extractHogFeatures(imgPath):
-    img = io.imread(imgPath)
-    imgGray = color.rgb2gray(img)
-    imgResized = resize(imgGray, (64, 64))  # Resize the image for consistency
+    img = cv2.imread(imgPath, cv2.IMREAD_GRAYSCALE)  # Read the image in grayscale using OpenCV
+    imgResized = resize(img, (64, 64))  # Resize the image for consistency
     hogFeatures = feature.hog(imgResized, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(2, 2),
                               block_norm='L2-Hys')
     return hogFeatures
@@ -23,17 +23,20 @@ def extractHogFeatures(imgPath):
 
 xTrain = [extractHogFeatures(path) for path in xTrain]
 xTest = [extractHogFeatures(path) for path in xTest]
+
 svmModel = SVC(kernel='linear')
 print("Training SVM")
 svmModel.fit(xTrain, yTrain)
 print("Predicting SVM")
 predictions = svmModel.predict(xTest)
+
 accuracy = accuracy_score(yTest, predictions)
 precision = precision_score(yTest, predictions, average='weighted')
 f1 = f1_score(yTest, predictions, average='weighted')
 recall = recall_score(yTest, predictions, average='weighted')
 confusion = confusion_matrix(yTest, predictions)
 report = classification_report(yTest, predictions)
+
 print(f"Confusion Matrix: {confusion}")
 print(f"Classification Report: {report}")
 print(f"Accuracy: {accuracy:.4f}")
