@@ -19,16 +19,26 @@ d100.jpg,1,dataset\dog.100.jpg
 d1000.jpg,1,dataset\dog.1000.jpg
 d10000.jpg,1,dataset\dog.10000.jpg
 ```
-## Extracting Features
+## Runtime Output
+The dataset was too large so the processing time was really slow. Consequently, it was decided to reduce the amount of images used, thus reducing the accuracy of the model.
 ```python
-def extract_hog_features(img_path):
-    """
-    Extract HOG features from an image.
+Confusion Matrix:
+[[1478  638]
+ [ 605 1479]]
 
-    Parameters:
-    - img_path (str): Path to the image file.
+Classification Report:
+                   precision    recall  f1-score   support
 
-    Returns:
-    - hog_features (numpy.ndarray): Array of HOG features.
-    """
+           0       0.71      0.70      0.70      2116
+           1       0.70      0.71      0.70      2084
+
+    accuracy                           0.70      4200
+   macro avg       0.70      0.70      0.70      4200
+weighted avg       0.70      0.70      0.70      4200
+
+Accuracy: 0.7040
+Precision: 0.7041
+Recall: 0.7040
+F1-Score: 0.7040
+  
 ```
